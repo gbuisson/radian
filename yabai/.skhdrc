@@ -1,0 +1,6 @@
+cmd - 1 : yabai -m space --focus 1
+cmd - 2 : yabai -m space --focus 2
+
+cmd - 3 : yabai -m window --warp first
+cmd - 4 : yabai -m window --toggle sticky
+cmd - 5 : yabai -m window --toggle float

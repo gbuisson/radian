@@ -770,3 +770,5 @@ fi
 # Local Variables:
 # outline-regexp: "##+"
 # End:
+export PATH="/usr/local/sbin:$PATH"
+export PATH="/usr/local/bin:$PATH"

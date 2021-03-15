@@ -1,6 +1,6 @@
 (setq visible-bell 1)
 (setq ring-bell-function 'ignore)
-
+(setq mac-mouse-wheel-smooth-scroll nil)
 (setq exec-path (append exec-path '("/usr/local/bin")))
 
 (defun setup-straight ()
@@ -46,7 +46,7 @@
   (cond
    ((member "-default" command-line-args) t)
    ((member "-dark" command-line-args) (require 'nano-theme-dark))
-   (t (require 'nano-theme-dark)))
+   (t (require 'nano-theme-light)))
 
   ;; Customize support for 'emacs -q' (Optional)
   ;; You can enable customizations by creating the nano-custom.el file
@@ -68,6 +68,8 @@
   (require 'nano-theme)
   (nano-theme)
 
+  (require 'nano-colors)
+  
   ;; Nano default settings (optional)
   (require 'nano-defaults)
 
@@ -116,9 +118,7 @@
     :straight t)
   (use-package cider
     :straight t
-    :init ((lambda ()
-             (setq cider-known-endpoints
-                   '(("home.local" "10.0.0.1" "48372"))))))
+    :init ((lambda ())))
   (use-package lispy
     :straight t
     :init ((lambda ()
@@ -167,6 +167,8 @@
     :straight '(vterm :source (melpa gnu-elpa-mirror))))
 
 (defun setup-autocompletion ()
+  (use-package counsel
+    :straight t)
   (use-package prescient
     :straight t)
   (use-package selectrum-prescient
@@ -187,8 +189,9 @@
 
 (setup-straight)
 (setup-use-package)
+(setup-autocompletion)
 (setup-style)
 (setup-editor)
 (setup-org-mode)
 (setup-term)
-(setup-autocompletion)
+

@@ -2,19 +2,22 @@
 (setq ring-bell-function 'ignore)
 (setq mac-mouse-wheel-smooth-scroll nil)
 (setq exec-path (append exec-path '("/usr/local/bin")))
+(setf comp-deferred-compilation-black-list '())
+(setq warning-minimum-level :error)
+(setq package-enable-at-startup nil)
 
 (defun setup-straight ()
   (defvar bootstrap-version)
   (let ((bootstrap-file
-         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-        (bootstrap-version 5))
+     (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+    (bootstrap-version 5))
     (unless (file-exists-p bootstrap-file)
       (with-current-buffer
           (url-retrieve-synchronously
            "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
            'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage)))
 
 (defun setup-use-package ()
@@ -28,10 +31,10 @@
 (defun setup-style ()
   (straight-use-package '(nano-emacs
                           :type git
+                          :build (:not compile)
                           :host github
                           :repo "rougier/nano-emacs"
                           :no-byte-compile t))
-
   ;; Default layout (optional)
   (require 'nano-layout)
 
@@ -68,8 +71,8 @@
   (require 'nano-theme)
   (nano-theme)
 
-  (require 'nano-colors)
-  
+  ;;(require 'nano-colors)
+
   ;; Nano default settings (optional)
   (require 'nano-defaults)
 
@@ -85,7 +88,7 @@
   ;; Compact layout (need to be loaded after nano-modeline)
   (when (member "-compact" command-line-args)
     (require 'nano-compact))
-  
+
   ;; Nano counsel configuration (optional)
   ;; Needs "counsel" package to be installed (M-x: package-install)
   ;; (require 'nano-counsel)
@@ -104,6 +107,16 @@
     (require 'nano-help)))
 
 (defun setup-editor ()
+  (setq tramp-connection-timeout 3)
+
+  ;; (add-hook 'before-save-hook 'whitespace-cleanup)
+  ;; (remove-hook 'before-save-hook 'whitespace-cleanup)
+
+  (use-package whitespace-cleanup-mode
+    :straight t
+    :init ((lambda ()
+             (add-hook 'clijure-mode-hook 'whitespace-cleanup-mode))))
+  
   (use-package magit
     :straight t)
   (use-package undo-tree
@@ -113,12 +126,25 @@
              (global-set-key (kbd "C-z") 'undo)
              (defalias 'redo 'undo-tree-redo)
              (global-set-key (kbd "C-S-z") 'redo))))
-  
+
   (use-package clojure-mode
     :straight t)
+
+  (use-package js2-mode
+    :straight t
+    :init (lambda ()
+            (setq js-indent-level 2)
+            (js2-highlight-level 3)
+            (js2r-prefer-let-over-var t)
+            (js2r-prefered-quote-type 2)))
+
+  (use-package graphql-mode
+    :straight t)
+
   (use-package cider
     :straight t
     :init ((lambda ())))
+
   (use-package lispy
     :straight t
     :init ((lambda ()
@@ -131,10 +157,17 @@
 
 (defun connect-iroh ()
   (interactive)
-  (cider-connect '("home.local" "10.0.0.1" 48372)))
+  (cider-connect '(:host "192.168.3.5" :port 48372)))
 
 (defun setup-org-mode ()
+  (setq org-src-tab-acts-natively t)
+  (setq  org-src-preserve-indentation nil)
   (setq org-hide-leading-stars nil)
+  (setq org-export-preserve-breaks t)
+
+  (use-package markdown-mode
+    :straight t)
+  
   (use-package org-roam
     :straight t
     :init (org-roam-mode)
@@ -148,6 +181,9 @@
                 (("C-c n i" . org-roam-insert))
                 (("C-c n I" . org-roam-insert-immediate))))
   (use-package ob-http
+    :straight t)
+
+  (use-package ob-graphql
     :straight t)
   (use-package ox-gfm
     :straight t)
@@ -179,7 +215,7 @@
   (use-package company
     :straight t
     :config (global-company-mode))
-  
+
   (use-package selectrum
     :straight t
     :config ((lambda ()
@@ -194,4 +230,3 @@
 (setup-editor)
 (setup-org-mode)
 (setup-term)
-

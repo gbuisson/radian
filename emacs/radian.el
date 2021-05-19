@@ -484,10 +484,10 @@ binding the variable dynamically over the entire init-file."
 
 (setq straight-current-profile 'radian)
 
-;; Use the develop branch of straight.el on Radian's develop branch.
-;; (On Radian's master branch, we use the master branch of
+;; Use the master branch of straight.el on Radian's master branch.
+;; (On Radian's develop branch, we use the develop branch of
 ;; straight.el.)
-(setq straight-repository-branch "develop")
+(setq straight-repository-branch "master")
 
 ;; If watchexec and Python are installed, use file watchers to detect
 ;; package modifications. This saves time at startup. Otherwise, use

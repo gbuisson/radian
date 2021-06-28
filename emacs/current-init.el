@@ -6,18 +6,31 @@
 (setq warning-minimum-level :error)
 (setq package-enable-at-startup nil)
 
+
+(require 'tramp)
+(setq tramp-remote-path
+      (append tramp-remote-path
+              '(tramp-own-remote-path
+                "~/.guix-profile/bin" "~/.guix-profile/sbin")))
+
+
+(require 'em-tramp)
+(setq eshell-prefer-lisp-functions t)
+
+
+
 (defun setup-straight ()
   (defvar bootstrap-version)
   (let ((bootstrap-file
-     (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-    (bootstrap-version 5))
+         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+        (bootstrap-version 5))
     (unless (file-exists-p bootstrap-file)
       (with-current-buffer
           (url-retrieve-synchronously
            "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
            'silent 'inhibit-cookies)
-    (goto-char (point-max))
-    (eval-print-last-sexp)))
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage)))
 
 (defun setup-use-package ()
@@ -107,7 +120,7 @@
     (require 'nano-help)))
 
 (defun setup-editor ()
-  (setq tramp-connection-timeout 3)
+  (setq tramp-connection-timeout 5)
 
   ;; (add-hook 'before-save-hook 'whitespace-cleanup)
   ;; (remove-hook 'before-save-hook 'whitespace-cleanup)
@@ -119,6 +132,11 @@
   
   (use-package magit
     :straight t)
+
+  (use-package forge
+    :after magit
+    :straight t)
+  
   (use-package undo-tree
     :straight t
     :init ((lambda ()
@@ -148,6 +166,7 @@
   (use-package lispy
     :straight t
     :init ((lambda ()
+             (add-hook 'scheme-mode-hook (lambda () (lispy-mode 1)))
              (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
              (add-hook 'clojure-mode-hook (lambda () (lispy-mode 1)))))))
 
@@ -165,6 +184,14 @@
   (setq org-hide-leading-stars nil)
   (setq org-export-preserve-breaks t)
 
+  (add-to-list 'org-latex-classes
+               '("amsart"
+                 "\\documentclass{amsart}"
+                 ("\\chapter{%s}" . "\\chapter*{%s}")
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+  
   (use-package markdown-mode
     :straight t)
   

@@ -209,9 +209,7 @@
                 (("C-c n I" . org-roam-insert-immediate))))
   (use-package ob-http
     :straight t)
-
-  (use-package ob-graphql
-    :straight t)
+  
   (use-package ox-gfm
     :straight t)
 
@@ -219,6 +217,14 @@
     :straight t
     :config (lambda ()
               (add-hook 'org-mode-hook 'toc-org-mode)))
+
+
+  (use-package wsd-mode
+    :straight t
+    :config ((lambda ()
+               (setq wsd-style "patent")
+               (setq wsd-api-key "l63A4am3GTzefqWVI5ocaGDbdasbgejv"))))
+
   (use-package plantuml-mode
     :straight t
     :config ((lambda ()
